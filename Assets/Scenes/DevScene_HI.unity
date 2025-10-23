@@ -906,7 +906,7 @@ GameObject:
   - component: {fileID: 7126993997061432513}
   - component: {fileID: 7184114044188990937}
   - component: {fileID: 7184114044188990939}
-  - component: {fileID: 7184114044188990938}
+  - component: {fileID: 7184114044188990940}
   m_Layer: 0
   m_Name: BatGoblin_Melee
   m_TagString: Untagged
@@ -940,7 +940,7 @@ Transform:
   m_GameObject: {fileID: 7125072251621238633}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.27, y: 0.55, z: -56.78}
+  m_LocalPosition: {x: -0.27, y: 0.55, z: -53.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1043,21 +1043,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7184114044188990938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7125072251621238633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 286b835ae5bfd674faf9abf7d208cc7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxHealth: 100
-  attackRange: 5
-  attackInterval: 1
 --- !u!195 &7184114044188990939
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1080,6 +1065,22 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7184114044188990940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7125072251621238633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edb46c0df5be2684784cd86c4eb92847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHealth: 100
+  attackRange: 2
+  attackInterval: 1
+  damage: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

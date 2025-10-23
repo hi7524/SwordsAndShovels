@@ -7,7 +7,7 @@ public class Enemy : LivingEntity
 {
     public float attackRange = 2;
     public float attackInterval = 1;
-    public float damage = 10;
+    public int damage = 10;
 
     private float attackRangeSqr;
     private float lastAttackTime;
@@ -16,10 +16,12 @@ public class Enemy : LivingEntity
     private Animator animator;
     private NavMeshAgent agent;
 
-    private IDamagable target;
-    private Transform targetTrans;
+    protected IDamagable Target { get; private set; }
+    protected Transform TargetTrans { get; private set; }
 
     private const string TARGET_TAG = "Player";
+    public static readonly int speedHash = Animator.StringToHash("Speed");
+    public static readonly int attackHash = Animator.StringToHash("Attack");
 
 
     private void Awake()
@@ -41,20 +43,19 @@ public class Enemy : LivingEntity
             return;
         }
 
-        Debug.Log($"공격 타겟: {target} 캐싱");
+        Debug.Log($"공격 타겟: {Target} 캐싱");
         
-        target = targetObj.GetComponent<IDamagable>();
-        targetTrans = targetObj.transform;
-        targetObj.GetComponent<LivingEntity>().OnDeath += () => target = null;
-        targetObj.GetComponent<LivingEntity>().OnDeath += () => targetTrans = null;
+        Target = targetObj.GetComponent<IDamagable>();
+        TargetTrans = targetObj.transform;
+        targetObj.GetComponent<LivingEntity>().OnDeath += HandleTargetDeath;
     }
 
     private void Update()
     {
-        if (target == null)
+        if (Target == null)
             return;
 
-        if (IsTargetInAttackRange())
+        if (!IsTargetInAttackRange())
         {
             agent.isStopped = false;
             Move();
@@ -70,17 +71,17 @@ public class Enemy : LivingEntity
             if (lastAttackTime + attackInterval <= Time.time)
             {
                 lastAttackTime = Time.time;
-                animator.SetTrigger("Attack");
+                animator.SetTrigger(attackHash);
             }
         }
 
-        animator.SetFloat("Speed", agent.velocity.magnitude <= 0.5f ? 0 : agent.velocity.magnitude * 1.1f);
+        animator.SetFloat(speedHash, agent.velocity.magnitude <= 0.5f ? 0 : agent.velocity.magnitude * 1.1f);
     }
 
     // 타겟 범위 내에 들어왔는지 여부 반환
     private bool IsTargetInAttackRange()
     {
-        float sqrDisToTarget = (targetTrans.position - transform.position).sqrMagnitude;
+        float sqrDisToTarget = (TargetTrans.position - transform.position).sqrMagnitude;
 
         return sqrDisToTarget <= attackRangeSqr;
     }
@@ -88,10 +89,10 @@ public class Enemy : LivingEntity
     // 이동
     private void Move()
     {
-        if (target == null)
+        if (Target == null)
             return;
 
-        agent.SetDestination(targetTrans.position);
+        agent.SetDestination(TargetTrans.position);
     }
 
     // 공격
@@ -111,7 +112,7 @@ public class Enemy : LivingEntity
     protected override void Die()
     {
         base.Die();
-        Debug.Log($"{gameObject.name} 사망");
+        gameObject.SetActive(false);
     }
 
     // 공격 사거리 표시
@@ -119,5 +120,12 @@ public class Enemy : LivingEntity
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    // 타겟 사망시
+    private void HandleTargetDeath()
+    {
+        Target = null;
+        TargetTrans = null;
     }
 }
