@@ -1,16 +1,20 @@
 using UnityEngine;
 
-public class EnemyRangedAttack : MonoBehaviour
+// KHI
+// 원거리 공격
+public class EnemyRangedAttack : Enemy
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Space]
+    public Bomb bombPrf;
+    public Transform bombFireTrans;
 
-    // Update is called once per frame
-    void Update()
+    protected override void Hit()
     {
-        
+        if (Target != null)
+        {
+            GameObject obj = Instantiate(bombPrf.gameObject);
+            obj.transform.position = bombFireTrans.position;
+            obj.GetComponent<Bomb>().Init(damage, TargetTrans);
+        }
     }
 }
