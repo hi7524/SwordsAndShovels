@@ -19,7 +19,7 @@ MonoBehaviour:
   hitboxType: 3
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 512
   range: 2.2
   radius: 0.25
   angle: 70
