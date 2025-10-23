@@ -11,13 +11,17 @@ public class Skill : MonoBehaviour
    
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             UseSkill(0);
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             UseSkill(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            UseSkill(2);
         }
 
 
@@ -65,16 +69,27 @@ public class Skill : MonoBehaviour
 
     void DoConeHit()
     {
-        
         Collider[] buf = Physics.OverlapSphere(transform.position, skillData.range, skillData.enemyLayer);
         Vector3 fwd = transform.forward;
+
+        
+        fwd.y = 0f;
+        fwd.Normalize();
+
         foreach (var c in buf)
         {
-            Vector3 dir = (c.transform.position - transform.position).normalized;
-            if (Vector3.Angle(fwd, dir) <= skillData.angle * 0.5f) TryDamage(c);
+            
+            Vector3 dir = (c.transform.position - transform.position);
+            dir.y = 0f; // YÃà ¹«½Ã
+            dir.Normalize();
+
+            float angle = Vector3.Angle(fwd, dir);
+            
+
+            if (angle <= skillData.angle * 0.5f)
+                TryDamage(c);
         }
     }
-
     void SpawnProjectile()
     {
         
@@ -88,25 +103,67 @@ public class Skill : MonoBehaviour
     {
         
         Enemy enemy = collider.GetComponentInParent<Enemy>();
-        Debug.Log(enemy);
+       
         if (enemy == null)
         {
             return;
         }
         enemy.OnDamage(skillData.skillDamage);
-        Debug.Log(123);
+        
     }
 
     void SpawnVfx()
     {
         if (!skillData.prefab) return;
-        var go = Instantiate(skillData.prefab, swordTip.position, swordTip.rotation);
+
+        Vector3 spawnPos = transform.position;
+        Quaternion spawnRot = Quaternion.identity;
+
+        
+        switch (skillData.hitboxType)
+        {
+            case SkillHitboxType.Capsule:
+                spawnPos = (swordRoot.position + swordTip.position) * 0.5f;
+                spawnRot = transform.rotation;
+                break;
+
+            case SkillHitboxType.Sphere:
+                spawnPos = transform.position;
+                spawnRot = Quaternion.identity;
+                break;
+
+            case SkillHitboxType.Cone:
+                spawnPos = transform.position;
+                spawnRot = Quaternion.LookRotation(transform.forward);
+                break;
+
+            case SkillHitboxType.Projectile:
+                spawnPos = spawnPoint.position;
+                spawnRot = spawnPoint.rotation;
+                break;
+        }
+
+        
+        var go = Instantiate(skillData.prefab, spawnPos, spawnRot);
+        
         Destroy(go, 1.0f);
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.yellow;
+        Vector3 fwd = transform.forward;
+        fwd.y = 0;
+        fwd.Normalize();
+
+        Quaternion left = Quaternion.AngleAxis(-skillData.angle * 0.5f, Vector3.up);
+        Quaternion right = Quaternion.AngleAxis(skillData.angle * 0.5f, Vector3.up);
+
+        Vector3 leftDir = left * fwd;
+        Vector3 rightDir = right * fwd;
+
+        Gizmos.DrawRay(transform.position, leftDir * skillData.range);
+        Gizmos.DrawRay(transform.position, rightDir * skillData.range);
         Gizmos.DrawWireSphere(transform.position, skillData.range);
     }
 }

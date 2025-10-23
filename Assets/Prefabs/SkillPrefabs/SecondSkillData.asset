@@ -15,8 +15,8 @@ MonoBehaviour:
   skillDamage: 10
   cost: 0
   cooldown: 0
-  prefab: {fileID: 6581329657955429008, guid: 6b3c8fa4d2b5ca44c957ed5da7c029a5, type: 3}
-  hitboxType: 4
+  prefab: {fileID: 6714037650790324515, guid: 4a476f63e4da5ca4fa476ddfbad3ace2, type: 3}
+  hitboxType: 2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
