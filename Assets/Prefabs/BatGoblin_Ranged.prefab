@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 96759808434442323}
   - component: {fileID: 4684735020229974197}
   - component: {fileID: 2620842971474051483}
+  - component: {fileID: 8755112571619937072}
   m_Layer: 0
   m_Name: BatGoblin_Ranged
   m_TagString: Untagged
@@ -191,6 +192,27 @@ MonoBehaviour:
   healthBar: {fileID: 3705666139932974892}
   bombPrf: {fileID: 4860705422530467567, guid: 75889ba6664188a4c9e97e4e8e90c199, type: 3}
   bombFireTrans: {fileID: 5968882732190445023}
+--- !u!65 &8755112571619937072
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3885421440642837322}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!1 &4847739542692747639
 GameObject:
   m_ObjectHideFlags: 0

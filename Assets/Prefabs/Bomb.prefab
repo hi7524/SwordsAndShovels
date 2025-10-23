@@ -249,3 +249,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   force: 6
   lifeDuration: 5
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256

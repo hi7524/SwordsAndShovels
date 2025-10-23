@@ -4,6 +4,7 @@ public class Bomb : MonoBehaviour
 {
     public float force = 20f;
     public float lifeDuration = 5f;
+    public LayerMask targetLayer;
 
     private int damage;
     private float fireTime;
@@ -43,7 +44,10 @@ public class Bomb : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IDamagable damagable = target.gameObject.GetComponent<IDamagable>();
+       if ((targetLayer & (1 << other.gameObject.layer)) == 0)
+            return;
+
+        IDamagable damagable = other.GetComponent<IDamagable>();
 
         if (damagable != null)
         {
