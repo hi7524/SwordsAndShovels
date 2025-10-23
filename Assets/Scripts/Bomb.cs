@@ -3,8 +3,10 @@ using UnityEngine;
 public class Bomb : MonoBehaviour
 {
     public float force = 20f;
+    public float lifeDuration = 5f;
 
     private int damage;
+    private float fireTime;
     private Vector3 fireDir;
     private Transform target;
     private Rigidbody rb;
@@ -13,6 +15,14 @@ public class Bomb : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (fireTime + lifeDuration <= Time.time)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void Init(int damage, Transform target)
@@ -26,14 +36,19 @@ public class Bomb : MonoBehaviour
 
     private void Fire()
     {
+        fireTime = Time.time;
+        fireDir.y += 2;
         rb.AddForce(fireDir * force, ForceMode.Impulse);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         IDamagable damagable = target.gameObject.GetComponent<IDamagable>();
-        damagable?.OnDamage(damage);
 
-        gameObject.SetActive(false);
+        if (damagable != null)
+        {
+            damagable.OnDamage(damage);
+            gameObject.SetActive(false);
+        }
     }
 }

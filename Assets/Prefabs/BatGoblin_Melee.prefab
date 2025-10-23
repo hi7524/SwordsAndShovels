@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  attackRange: 2
+  detectRange: 4
   attackInterval: 1
   damage: 10
   healthBar: {fileID: 3195651155285474310}

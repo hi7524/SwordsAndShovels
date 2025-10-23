@@ -6,14 +6,14 @@ using UnityEngine.UI;
 // 적 캐릭터 (원거리, 근거리) 이동, 공격, 피격, 죽음
 public class Enemy : LivingEntity
 {
-    public float attackRange = 2;
+    public float detectRange = 2;
     public float attackInterval = 1;
     public int damage = 10;
     public Slider healthBar;
 
     private float attackRangeSqr;
     private float lastAttackTime;
-    private bool isMoving = false;
+    private bool isAttacking = false;
 
     private Animator animator;
     private NavMeshAgent agent;
@@ -28,7 +28,7 @@ public class Enemy : LivingEntity
 
     private void Awake()
     {
-        attackRangeSqr = attackRange * attackRange;
+        attackRangeSqr = detectRange * detectRange;
 
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -60,9 +60,10 @@ public class Enemy : LivingEntity
         if (Target == null)
             return;
 
-        if (!IsTargetInAttackRange())
+        if (IsTargetInAttackRange())
         {
             agent.isStopped = false;
+            isAttacking = false;
             Move();
         }
         else
@@ -70,14 +71,21 @@ public class Enemy : LivingEntity
             agent.isStopped = true;
         }
 
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (IsTargetInAttackRange() && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
+            isAttacking = true;
+
             // 일정 간격 공격
             if (lastAttackTime + attackInterval <= Time.time)
             {
                 lastAttackTime = Time.time;
                 animator.SetTrigger(attackHash);
             }
+        }
+
+        if (isAttacking)
+        {
+            RotateToTarget();
         }
 
         animator.SetFloat(speedHash, agent.velocity.magnitude <= 0.5f ? 0 : agent.velocity.magnitude * 1.1f);
@@ -98,6 +106,11 @@ public class Enemy : LivingEntity
             return;
 
         agent.SetDestination(TargetTrans.position);
+    }
+
+    private void RotateToTarget()
+    {
+        transform.LookAt(TargetTrans);
     }
 
     // 공격
@@ -125,7 +138,7 @@ public class Enemy : LivingEntity
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, detectRange);
     }
 
     // 타겟 사망시
