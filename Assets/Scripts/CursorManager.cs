@@ -34,6 +34,17 @@ public class CursorManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
+        if (Physics.Raycast(ray, out hit, 100f, enemyLayer))
+        {
+            currentState = CursorState.Attack;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                player.PlayerAttack(hit.collider.gameObject);
+            }
+            return;
+        }
+
         if (Physics.Raycast(ray, out hit, 100f, tunnelLayer))
         {
             currentState = CursorState.Tunnel;
@@ -50,18 +61,7 @@ public class CursorManager : MonoBehaviour
         {
             currentState = CursorState.Nav;
             return;
-        }
-
-        if(Physics.Raycast(ray, out hit, 100f, enemyLayer))
-        {
-            currentState = CursorState.Attack;
-
-            if(Input.GetMouseButtonDown(0))
-            {
-                player.PlayerAttack(hit.collider.gameObject);
-            }
-            return;
-        }    
+        }  
 
         currentState = CursorState.Default;
     }

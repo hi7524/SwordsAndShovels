@@ -13,10 +13,18 @@ public class Player : LivingEntity
 
     public float sampleDistance = 5f;
 
+    public float attackRange = 2f;
+
     public Transform[] tunnelEndLocation;
 
     public static readonly int speedHash = Animator.StringToHash("Speed");
     public static readonly int attackHash = Animator.StringToHash("Attack");
+
+    private bool isAttacking = false;
+    private GameObject targetObj;
+
+    private float attackDuration;
+    private float attackTimer = 0f;
 
     public void Start()
     {
@@ -26,7 +34,42 @@ public class Player : LivingEntity
 
     public void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (isAttacking)
+        {
+            attackTimer += Time.deltaTime;
+
+            if (attackTimer >= attackDuration / 2f && target != null)
+            {
+                Hit();
+                target = null; 
+            }
+
+            if (isAttacking && targetObj != null)
+            {
+                float dist = Vector3.Distance(transform.position, targetObj.transform.position);
+
+                if (dist > attackRange)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(targetObj.transform.position);
+                }
+                else
+                {
+                    agent.isStopped = true;
+                }
+            }
+
+            if (attackTimer >= attackDuration)
+            {
+                isAttacking = false;
+                agent.isStopped = false;
+                attackTimer = 0f;
+            }
+
+            return; 
+        }
+
+        if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -42,6 +85,7 @@ public class Player : LivingEntity
             animator.SetFloat(speedHash, agent.velocity.magnitude <= 0.5f ? 0 : agent.velocity.magnitude * 1.1f);
         }
     }
+
 
     public void MoveThroughTunnel()
     {
@@ -66,20 +110,44 @@ public class Player : LivingEntity
         }
     }
 
-    public void PlayerAttack(GameObject targetObj)
+    public void PlayerAttack(GameObject newTargetObj)
     {
-        var damageble = targetObj.GetComponent<IDamagable>();
-        if(damageble != null)
+        if (newTargetObj == null)
         {
-           target = damageble;
+            return;
+        }
+
+        var damageble = newTargetObj.GetComponent<IDamagable>();
+        if (damageble != null)
+        {
+            this.targetObj = newTargetObj;
+            this.target = damageble;
+
+            isAttacking = true;
+            agent.isStopped = true;
+
+            attackTimer = 0f;
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            attackDuration = state.length;
+
+            transform.LookAt(newTargetObj.transform.position);
             animator.SetTrigger(attackHash);
         }
     }
+
+
     public void Hit()
     {
+        if (target == null)
+        {
+            Debug.LogWarning("Hit()는 호출  target이 없음");
+            return;
+        }
+
         Debug.Log("Damaging");
         target.OnDamage(damage);
     }
+
 
     protected override void Die()
     {
