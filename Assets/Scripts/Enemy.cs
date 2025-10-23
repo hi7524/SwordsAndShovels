@@ -57,8 +57,16 @@ public class Enemy : LivingEntity
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Die();
+        }
+
         if (Target == null)
             return;
+
+        if (!agent.isOnNavMesh)
+        return;
 
         if (IsTargetInAttackRange())
         {
