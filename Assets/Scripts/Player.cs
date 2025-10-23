@@ -74,6 +74,7 @@ public class Player : LivingEntity
            target = damageble;
             animator.SetTrigger(attackHash);
         }
+
     }
     public void Hit()
     {
@@ -90,5 +91,6 @@ public class Player : LivingEntity
     public override void OnDamage(int damage)
     {
         base.OnDamage(damage);
+        DamagePopupSpawner.Instance.ShowPopup(transform.position, damage);
     }
 }
