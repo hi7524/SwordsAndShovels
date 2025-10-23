@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 // KHI
 // 적 캐릭터 (원거리, 근거리) 이동, 공격, 피격, 죽음
@@ -8,6 +9,7 @@ public class Enemy : LivingEntity
     public float attackRange = 2;
     public float attackInterval = 1;
     public int damage = 10;
+    public Slider healthBar;
 
     private float attackRangeSqr;
     private float lastAttackTime;
@@ -34,6 +36,9 @@ public class Enemy : LivingEntity
 
     private void Start()
     {
+        // 체력바 초기화
+        healthBar.value = Health / MaxHealth;
+
         // 플레이어 (타겟) 캐싱
         GameObject targetObj = GameObject.FindGameObjectWithTag(TARGET_TAG);
 
@@ -105,6 +110,7 @@ public class Enemy : LivingEntity
     public override void OnDamage(int damage)
     {
         base.OnDamage(damage);
+        healthBar.value = Health / MaxHealth;
         Debug.Log($"{gameObject.name} HP: {Health}");
     }
 
