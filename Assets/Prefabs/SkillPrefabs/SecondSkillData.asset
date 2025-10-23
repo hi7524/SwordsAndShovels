@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6759dd7c17d6fcb4c9edf79ed11bceef, type: 3}
   m_Name: SecondSkillData
   m_EditorClassIdentifier: 
-  skillDamage: 10
+  skillDamage: 25
   cost: 0
-  cooldown: 0
+  cooldown: 2
   prefab: {fileID: 6714037650790324515, guid: 4a476f63e4da5ca4fa476ddfbad3ace2, type: 3}
   hitboxType: 2
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 256
   range: 2.2
   radius: 0.25
   angle: 70

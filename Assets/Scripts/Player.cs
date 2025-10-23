@@ -133,6 +133,7 @@ public class Player : LivingEntity
             transform.LookAt(newTargetObj.transform.position);
             animator.SetTrigger(attackHash);
         }
+
     }
 
 
@@ -158,5 +159,6 @@ public class Player : LivingEntity
     public override void OnDamage(int damage)
     {
         base.OnDamage(damage);
+        DamagePopupSpawner.Instance.ShowPopup(transform.position, damage);
     }
 }

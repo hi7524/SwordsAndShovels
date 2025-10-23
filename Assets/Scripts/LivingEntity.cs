@@ -26,10 +26,11 @@ public class LivingEntity : MonoBehaviour, IDamagable
     public virtual void OnDamage(int damage)
     {
         Health -= damage;
-
+        
         if (Health <= 0 && !IsDead)
         {
             Die();
         }
+
     }
 }

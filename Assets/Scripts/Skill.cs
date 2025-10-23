@@ -4,20 +4,27 @@ public class Skill : MonoBehaviour
 {
 
     public SkillData[] skillDatas;
-   
+
     public Transform swordRoot, swordTip, spawnPoint;
     public GameObject EnemyEffect;
-    public SkillData skillData;
-   
+    private SkillData skillData;
+    private float rightTimer = 2f;
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            UseSkill(0);
+        rightTimer += Time.deltaTime;
+        if (Input.GetMouseButtonDown(1))
+        {   
+            if(rightTimer>2)
+            {
+                UseSkill(1);
+                rightTimer = 0;
+            }
+            
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            UseSkill(1);
+            UseSkill(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
@@ -49,7 +56,7 @@ public class Skill : MonoBehaviour
         {
             SpawnVfx();
         }
-        
+
 
     }
     void DoCapsuleHit()
@@ -63,7 +70,7 @@ public class Skill : MonoBehaviour
     void DoSphereHit()
     {
         Collider[] buf = Physics.OverlapSphere(transform.position, skillData.range, skillData.enemyLayer);
-        
+
         foreach (var c in buf) TryDamage(c);
     }
 
@@ -72,19 +79,19 @@ public class Skill : MonoBehaviour
         Collider[] buf = Physics.OverlapSphere(transform.position, skillData.range, skillData.enemyLayer);
         Vector3 fwd = transform.forward;
 
-        
+
         fwd.y = 0f;
         fwd.Normalize();
 
         foreach (var c in buf)
         {
-            
+
             Vector3 dir = (c.transform.position - transform.position);
             dir.y = 0f; // YÃà ¹«½Ã
             dir.Normalize();
 
             float angle = Vector3.Angle(fwd, dir);
-            
+
 
             if (angle <= skillData.angle * 0.5f)
                 TryDamage(c);
@@ -92,24 +99,24 @@ public class Skill : MonoBehaviour
     }
     void SpawnProjectile()
     {
-        
+
         var proj = Instantiate(skillData.prefab, spawnPoint.position, spawnPoint.rotation);
         if (proj.TryGetComponent<Rigidbody>(out var rb))
             rb.linearVelocity = spawnPoint.forward * 10f;
-        Destroy(proj, 1f); 
-        
+        Destroy(proj, 1f);
+
     }
     private void TryDamage(Collider collider)
     {
-        
-        Enemy enemy = collider.GetComponentInParent<Enemy>();
-       
+
+        Enemy enemy = collider.GetComponent<Enemy>();
+
         if (enemy == null)
         {
             return;
         }
         enemy.OnDamage(skillData.skillDamage);
-        
+
     }
 
     void SpawnVfx()
@@ -119,7 +126,7 @@ public class Skill : MonoBehaviour
         Vector3 spawnPos = transform.position;
         Quaternion spawnRot = Quaternion.identity;
 
-        
+
         switch (skillData.hitboxType)
         {
             case SkillHitboxType.Capsule:
@@ -143,27 +150,10 @@ public class Skill : MonoBehaviour
                 break;
         }
 
-        
+
         var go = Instantiate(skillData.prefab, spawnPos, spawnRot);
-        
+
         Destroy(go, 1.0f);
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Vector3 fwd = transform.forward;
-        fwd.y = 0;
-        fwd.Normalize();
-
-        Quaternion left = Quaternion.AngleAxis(-skillData.angle * 0.5f, Vector3.up);
-        Quaternion right = Quaternion.AngleAxis(skillData.angle * 0.5f, Vector3.up);
-
-        Vector3 leftDir = left * fwd;
-        Vector3 rightDir = right * fwd;
-
-        Gizmos.DrawRay(transform.position, leftDir * skillData.range);
-        Gizmos.DrawRay(transform.position, rightDir * skillData.range);
-        Gizmos.DrawWireSphere(transform.position, skillData.range);
-    }
 }

@@ -131,8 +131,10 @@ public class Enemy : LivingEntity
     public override void OnDamage(int damage)
     {
         base.OnDamage(damage);
+        
         healthBar.value = Health / MaxHealth;
         Debug.Log($"{gameObject.name} HP: {Health}");
+        DamagePopupSpawner.Instance.ShowPopup(transform.position, damage);
     }
 
     // 죽음
