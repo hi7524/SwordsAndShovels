@@ -5,7 +5,8 @@ public enum CursorState
 {
     Default,
     Nav,
-    Tunnel
+    Tunnel,
+    Attack
 }
 
 public class CursorManager : MonoBehaviour
@@ -13,9 +14,11 @@ public class CursorManager : MonoBehaviour
     public Texture2D defaultCursor;
     public Texture2D navCursor;
     public Texture2D tunnelCursor;
+    public Texture2D attackCursor;
 
     public LayerMask navMeshLayer;
     public LayerMask tunnelLayer;
+    public LayerMask enemyLayer;
     private CursorState currentState = CursorState.Default;
 
     [SerializeField] private Player player;
@@ -37,8 +40,7 @@ public class CursorManager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                player.test = true;
-                //player.MoveThroughTunnel();
+                player.MoveThroughTunnel();
             }
 
             return;
@@ -49,6 +51,17 @@ public class CursorManager : MonoBehaviour
             currentState = CursorState.Nav;
             return;
         }
+
+        if(Physics.Raycast(ray, out hit, 100f, enemyLayer))
+        {
+            currentState = CursorState.Attack;
+
+            if(Input.GetMouseButtonDown(0))
+            {
+                player.PlayerAttack(hit.collider.gameObject);
+            }
+            return;
+        }    
 
         currentState = CursorState.Default;
     }
@@ -67,6 +80,9 @@ public class CursorManager : MonoBehaviour
 
             case CursorState.Tunnel:
                 Cursor.SetCursor(tunnelCursor, Vector2.zero, CursorMode.Auto);
+                break;
+            case CursorState.Attack:
+                Cursor.SetCursor(attackCursor, Vector2.zero, CursorMode.Auto);
                 break;
         }
     }

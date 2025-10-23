@@ -1,18 +1,22 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Player : MonoBehaviour
+public class Player : LivingEntity
 {
     private NavMeshAgent agent;
     private Animator animator;
 
     public LayerMask groundLayer;
+    public int damage = 10;
+
+    private IDamagable target;
 
     public float sampleDistance = 5f;
 
     public Transform[] tunnelEndLocation;
 
-    public bool test = false;
+    public static readonly int speedHash = Animator.StringToHash("Speed");
+    public static readonly int attackHash = Animator.StringToHash("Attack");
 
     public void Start()
     {
@@ -33,18 +37,9 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (test)
-        {
-            agent.SetDestination(tunnelEndLocation[1].position);
-        }
-
-
         if (animator != null)
         {
-            float currentSpeed = agent.velocity.magnitude;
-            float normalizedSpeed = currentSpeed / agent.speed;
-
-            animator.SetFloat("Speed", normalizedSpeed);
+            animator.SetFloat(speedHash, agent.velocity.magnitude <= 0.5f ? 0 : agent.velocity.magnitude * 1.1f);
         }
     }
 
@@ -52,9 +47,6 @@ public class Player : MonoBehaviour
     {
         var door1 = Vector3.Distance(tunnelEndLocation[0].position, transform.position);
         var door2 = Vector3.Distance(tunnelEndLocation[1].position, transform.position);
-
-        Debug.Log(door1);
-        Debug.Log(door2);
 
         if(door1 < door2)
         {
@@ -72,5 +64,31 @@ public class Player : MonoBehaviour
         {
             agent.SetDestination(navMeshHit.position);
         }
+    }
+
+    public void PlayerAttack(GameObject targetObj)
+    {
+        var damageble = targetObj.GetComponent<IDamagable>();
+        if(damageble != null)
+        {
+           target = damageble;
+            animator.SetTrigger(attackHash);
+        }
+    }
+    public void Hit()
+    {
+        Debug.Log("Damaging");
+        target.OnDamage(damage);
+    }
+
+    protected override void Die()
+    {
+        base.Die();
+        gameObject.SetActive(false);
+    }
+
+    public override void OnDamage(int damage)
+    {
+        base.OnDamage(damage);
     }
 }
