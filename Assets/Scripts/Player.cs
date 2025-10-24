@@ -1,11 +1,15 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Player : LivingEntity
 {
     private NavMeshAgent agent;
     private Animator animator;
 
+    public Slider hpBar;
+    public TextMeshProUGUI healthText;
     public LayerMask groundLayer;
     public int damage = 10;
 
@@ -141,7 +145,7 @@ public class Player : LivingEntity
     {
         if (target == null)
         {
-            Debug.LogWarning("Hit()´Â È£Ãâ  targetÀÌ ¾øÀ½");
+            Debug.LogWarning("Hit()ï¿½ï¿½ È£ï¿½ï¿½  targetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
@@ -159,6 +163,8 @@ public class Player : LivingEntity
     public override void OnDamage(int damage)
     {
         base.OnDamage(damage);
+        hpBar.value = Health / MaxHealth;
+        healthText.text = $"{Health} / {MaxHealth}";
         DamagePopupSpawner.Instance.ShowPopup(transform.position, damage);
     }
 }
